@@ -152,7 +152,6 @@
     <string name="lbl_last_played">"Last played "</string>
     <string name="lbl_directed_by">Directed by</string>
     <string name="lbl_ends">Ends</string>
-    <string name="lbl_min">" min"</string>
     <string name="lbl_runs">Runs</string>
     <string name="lbl_sd">SD</string>
     <string name="lbl_watched">Watched</string>
@@ -563,4 +562,6 @@
     <string name="segment_type_unknown">Unknown segments</string>
     <string name="default_video_zoom">Default zoom mode</string>
     <string name="segment_action_ask_to_skip">Ask to skip</string>
+    <string name="skip_forward_length">Skip forward length</string>
+    <string name="preference_enable_trickplay">Enable trickplay in video player</string>
 </resources>

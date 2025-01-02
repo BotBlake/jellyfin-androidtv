@@ -512,7 +512,7 @@ public class PlaybackController implements PlaybackControllerNotifiable {
             internalOptions.setMediaSourceId(currentMediaSource.getId());
         }
         DeviceProfile internalProfile = new ExoPlayerProfile(
-                isLiveTv && !userPreferences.getValue().get(UserPreferences.Companion.getLiveTvDirectPlayEnabled()),
+                !internalOptions.getEnableDirectStream(),
                 userPreferences.getValue().get(UserPreferences.Companion.getAc3Enabled()),
                 userPreferences.getValue().get(UserPreferences.Companion.getAudioBehaviour()) == AudioBehavior.DOWNMIX_TO_STEREO
         );
@@ -1000,6 +1000,8 @@ public class PlaybackController implements PlaybackControllerNotifiable {
     }
 
     private void startReportLoop() {
+        if (mCurrentStreamInfo == null) return;
+
         stopReportLoop();
         reportingHelper.getValue().reportProgress(mFragment, this, getCurrentlyPlayingItem(), getCurrentStreamInfo(), mCurrentPosition * 10000, false);
         mReportLoop = new Runnable() {
@@ -1021,7 +1023,8 @@ public class PlaybackController implements PlaybackControllerNotifiable {
 
     private void startPauseReportLoop() {
         stopReportLoop();
-        reportingHelper.getValue().reportProgress(mFragment, this, getCurrentlyPlayingItem(), getCurrentStreamInfo(), mCurrentPosition * 10000, true);
+        if (mCurrentStreamInfo == null) return;
+        reportingHelper.getValue().reportProgress(mFragment, this, getCurrentlyPlayingItem(), mCurrentStreamInfo, mCurrentPosition * 10000, true);
         mReportLoop = new Runnable() {
             @Override
             public void run() {

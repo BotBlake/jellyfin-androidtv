@@ -141,7 +141,6 @@
     <string name="lbl_search_hint">搜尋文字（選擇鍵盤）</string>
     <string name="lbl_tv_queuing">自動播放下一集</string>
     <string name="lbl_ends">結束</string>
-    <string name="lbl_min">" 分鐘"</string>
     <string name="lbl_item">項目</string>
     <string name="lbl_items">項目</string>
     <string name="lbl_specials">特典</string>
@@ -526,12 +525,12 @@
     <string name="dts_hd">DTS:HD</string>
     <string name="all_channels">所有頻道</string>
     <string name="lbl_runtime">運行時</string>
-    <string name="segment_action_ask_to_skip">請求跳過</string>
+    <string name="segment_action_ask_to_skip">詢問是否跳過</string>
     <string name="video_start_delay">影片啟動延遲</string>
     <string name="default_video_zoom">預設縮放模式</string>
     <string name="pref_mediasegment_actions">媒體片段動作</string>
     <string name="segment_action_nothing">無動作</string>
-    <string name="segment_action_skip">直接跳過</string>
+    <string name="segment_action_skip">跳過</string>
     <string name="preference_enable_trickplay">影片播放器中啟用特技播放功能</string>
     <string name="segment_type_commercial">廣告</string>
     <string name="segment_type_intro">片頭</string>

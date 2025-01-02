@@ -50,7 +50,6 @@
     <string name="lbl_upcoming">Ожидаемое</string>
     <string name="lbl_sd">SD</string>
     <string name="lbl_runs">Длится</string>
-    <string name="lbl_min">" мин"</string>
     <string name="lbl_ends">Конец</string>
     <string name="lbl_directed_by">Режиссёр</string>
     <string name="lbl_last_played">"Последнее воспроизведение "</string>
@@ -583,4 +582,6 @@
     <string name="segment_type_intro">Интро</string>
     <string name="past_24_hours">Последние 24 часа</string>
     <string name="clear_image_cache">Очистить кэш изображений</string>
+    <string name="preference_enable_trickplay">Включить trickplay при просмотре видео</string>
+    <string name="skip_forward_length">Длина перемотки вперед</string>
 </resources>
