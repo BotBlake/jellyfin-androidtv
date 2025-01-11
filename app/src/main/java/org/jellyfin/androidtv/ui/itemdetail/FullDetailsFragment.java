@@ -442,7 +442,7 @@ public class FullDetailsFragment extends Fragment implements RecordingIndicatorV
                                 String.format("%d", Utils.getSafeValue(item.getChildCount(), 0)));
                     } else if (item.getType() == BaseItemKind.AUDIO_BOOK){
                         firstRow = new InfoItem(
-                                getString(R.string.lbl_written_by),
+                                getString(R.string.book_written_by),
                                 author != null ? author.getName() : getString(R.string.lbl_bracket_unknown));
                     } else {
                         firstRow = new InfoItem(
@@ -971,7 +971,7 @@ public class FullDetailsFragment extends Fragment implements RecordingIndicatorV
         if (userData != null && mProgramInfo == null) {
             if (mBaseItem.getType() != BaseItemKind.MUSIC_ARTIST && mBaseItem.getType() != BaseItemKind.PERSON) {
                 if (mBaseItem.getType() == BaseItemKind.AUDIO_BOOK){
-                    mWatchedToggleButton = TextUnderButton.create(requireContext(), R.drawable.ic_watch, buttonSize, 0, getString(R.string.lbl_listened), markWatchedListener);
+                    mWatchedToggleButton = TextUnderButton.create(requireContext(), R.drawable.ic_watch, buttonSize, 0, getString(R.string.book_listened_on), markWatchedListener);
                 } else {
                     mWatchedToggleButton = TextUnderButton.create(requireContext(), R.drawable.ic_watch, buttonSize, 0, getString(R.string.lbl_watched), markWatchedListener);
                 }
