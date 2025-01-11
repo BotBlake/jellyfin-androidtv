@@ -10,6 +10,7 @@ import org.jellyfin.androidtv.ui.browsing.BrowseRowDef
 import org.jellyfin.androidtv.ui.presentation.CardPresenter
 import org.jellyfin.androidtv.ui.presentation.MutableObjectAdapter
 import org.jellyfin.sdk.model.api.BaseItemDto
+import org.jellyfin.sdk.model.api.BaseItemKind
 import org.jellyfin.sdk.model.api.CollectionType
 import org.jellyfin.sdk.model.api.request.GetLatestMediaRequest
 
@@ -24,7 +25,7 @@ class HomeFragmentLatestRow(
 		// Create a list of views to include
 		val latestItemsExcludes = configuration?.latestItemsExcludes.orEmpty()
 		userViews
-			.filterNot { item -> item.collectionType in EXCLUDED_COLLECTION_TYPES || item.id in latestItemsExcludes }
+			.filterNot { item ->  item.collectionType in EXCLUDED_COLLECTION_TYPES || item.id in latestItemsExcludes }
 			.map { item ->
 				// Create query and add it to a new row
 				val request = GetLatestMediaRequest(
@@ -48,8 +49,7 @@ class HomeFragmentLatestRow(
 		private val EXCLUDED_COLLECTION_TYPES = arrayOf(
 			CollectionType.PLAYLISTS,
 			CollectionType.LIVETV,
-			CollectionType.BOXSETS,
-			CollectionType.BOOKS,
+			CollectionType.BOXSETS
 		)
 
 		// Maximum amount of items loaded for a row

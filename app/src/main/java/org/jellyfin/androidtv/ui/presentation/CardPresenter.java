@@ -108,6 +108,7 @@ public class CardPresenter extends Presenter {
                     }
                     switch (itemDto.getType()) {
                         case AUDIO:
+                        case AUDIO_BOOK:
                         case MUSIC_ALBUM:
                             mDefaultCardImage = ContextCompat.getDrawable(mCardView.getContext(), R.drawable.tile_audio);
                             if (isUniformAspect) {

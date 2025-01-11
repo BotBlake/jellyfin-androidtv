@@ -345,7 +345,8 @@ public class FullDetailsFragment extends Fragment implements RecordingIndicatorV
             BaseItemKind.TRAILER,
             BaseItemKind.MUSIC_ARTIST,
             BaseItemKind.PERSON,
-            BaseItemKind.MUSIC_VIDEO
+            BaseItemKind.MUSIC_VIDEO,
+            BaseItemKind.AUDIO_BOOK
     };
 
     private static List<BaseItemKind> buttonTypeList = Arrays.asList(buttonTypes);

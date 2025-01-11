@@ -29,7 +29,6 @@ class HomeFragmentHelper(
 			imageTypeLimit = 1,
 			enableTotalRecordCount = false,
 			mediaTypes = includeMediaTypes,
-			excludeItemTypes = setOf(BaseItemKind.AUDIO_BOOK),
 		)
 
 		return HomeFragmentBrowseRowDefRow(BrowseRowDef(title, query, 0, false, true, arrayOf(ChangeTriggerType.TvPlayback, ChangeTriggerType.MoviePlayback)))
