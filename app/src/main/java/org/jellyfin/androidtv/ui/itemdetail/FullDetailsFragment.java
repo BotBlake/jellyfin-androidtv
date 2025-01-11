@@ -1226,6 +1226,8 @@ public class FullDetailsFragment extends Fragment implements RecordingIndicatorV
 
                 if (item.getType() == BaseItemKind.MUSIC_ARTIST) {
                     mediaManager.getValue().playNow(requireContext(), response, 0, shuffle);
+                } else if (item.getType() == BaseItemKind.AUDIO_BOOK) {
+                    mediaManager.getValue().playNowFrom(requireContext(), response, pos, 0, shuffle);
                 } else {
                     videoQueueManager.getValue().setCurrentVideoQueue(response);
                     Destination destination = KoinJavaComponent.<PlaybackLauncher>get(PlaybackLauncher.class).getPlaybackDestination(item.getType(), pos);

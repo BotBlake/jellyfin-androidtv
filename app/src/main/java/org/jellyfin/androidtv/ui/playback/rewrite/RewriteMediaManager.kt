@@ -31,6 +31,8 @@ import org.jellyfin.playback.jellyfin.queue.createBaseItemQueueEntry
 import org.jellyfin.sdk.api.client.ApiClient
 import org.jellyfin.sdk.model.api.BaseItemDto
 import org.jellyfin.sdk.model.api.MediaType
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 @Suppress("TooManyFunctions")
 class RewriteMediaManager(
@@ -219,6 +221,20 @@ class RewriteMediaManager(
 		playbackManager.queue.clear()
 		playbackManager.queue.addSupplier(queueSupplier)
 		playbackManager.state.play()
+
+		navigationRepository.navigate(Destinations.nowPlaying)
+	}
+
+	override fun playNowFrom(context: Context, items: List<BaseItemDto>, startposition: Int, position: Int, shuffle: Boolean) {
+		val filteredItems = items.drop(position)
+		queueSupplier.items.clear()
+		queueSupplier.items.addAll(filteredItems)
+		playbackManager.state.setPlaybackOrder(if (shuffle) PlaybackOrder.SHUFFLE else PlaybackOrder.DEFAULT)
+		playbackManager.queue.clear()
+		playbackManager.queue.addSupplier(queueSupplier)
+		playbackManager.state.play()
+
+		playbackManager.state.seek(startposition.toDuration(DurationUnit.MILLISECONDS) )
 
 		navigationRepository.navigate(Destinations.nowPlaying)
 	}
