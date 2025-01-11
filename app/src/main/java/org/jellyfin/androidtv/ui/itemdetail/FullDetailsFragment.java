@@ -433,12 +433,17 @@ public class FullDetailsFragment extends Fragment implements RecordingIndicatorV
                 default:
 
                     BaseItemPerson director = BaseItemExtensionsKt.getFirstPerson(item, PersonKind.DIRECTOR);
+                    BaseItemPerson author = BaseItemExtensionsKt.getFirstPerson(item, PersonKind.AUTHOR);
 
                     InfoItem firstRow;
                     if (item.getType() == BaseItemKind.SERIES) {
                         firstRow = new InfoItem(
                                 getString(R.string.lbl_seasons),
                                 String.format("%d", Utils.getSafeValue(item.getChildCount(), 0)));
+                    } else if (item.getType() == BaseItemKind.AUDIO_BOOK){
+                        firstRow = new InfoItem(
+                                getString(R.string.lbl_written_by),
+                                author != null ? author.getName() : getString(R.string.lbl_bracket_unknown));
                     } else {
                         firstRow = new InfoItem(
                                 getString(R.string.lbl_directed_by),
@@ -641,6 +646,14 @@ public class FullDetailsFragment extends Fragment implements RecordingIndicatorV
 
                 addInfoRows(adapter);
                 break;
+            case AUDIO_BOOK:
+                //Cast/Crew
+                if (mBaseItem.getPeople() != null && !mBaseItem.getPeople().isEmpty()) {
+                    ItemRowAdapter castAdapter = new ItemRowAdapter(mBaseItem.getPeople(), requireContext(), new CardPresenter(true, 130), adapter);
+                    addItemRow(adapter, castAdapter, 1, getString(R.string.lbl_cast_crew));
+                }
+
+                break;
 
             default:
                 addInfoRows(adapter);
@@ -713,7 +726,7 @@ public class FullDetailsFragment extends Fragment implements RecordingIndicatorV
 
     void addItemToQueue() {
         BaseItemDto baseItem = mBaseItem;
-        if (baseItem.getType() == BaseItemKind.AUDIO || baseItem.getType() == BaseItemKind.MUSIC_ALBUM || baseItem.getType() == BaseItemKind.MUSIC_ARTIST) {
+        if (baseItem.getType() == BaseItemKind.AUDIO || baseItem.getType() == BaseItemKind.MUSIC_ALBUM || baseItem.getType() == BaseItemKind.MUSIC_ARTIST || baseItem.getType() == BaseItemKind.AUDIO_BOOK) {
             if (baseItem.getType() == BaseItemKind.MUSIC_ALBUM || baseItem.getType() == BaseItemKind.MUSIC_ARTIST) {
                 playbackHelper.getValue().getItemsToPlay(getContext(), baseItem, false, false, new LifecycleAwareResponse<List<BaseItemDto>>(getLifecycle()) {
                     @Override
@@ -799,12 +812,13 @@ public class FullDetailsFragment extends Fragment implements RecordingIndicatorV
                 playButton.requestFocus();
             }
 
-            boolean isMusic = baseItem.getType() == BaseItemKind.MUSIC_ALBUM
+            boolean isAudio = baseItem.getType() == BaseItemKind.MUSIC_ALBUM
                     || baseItem.getType() == BaseItemKind.MUSIC_ARTIST
                     || baseItem.getType() == BaseItemKind.AUDIO
-                    || (baseItem.getType() == BaseItemKind.PLAYLIST && MediaType.AUDIO.equals(baseItem.getMediaType()));
+                    || (baseItem.getType() == BaseItemKind.PLAYLIST && MediaType.AUDIO.equals(baseItem.getMediaType()))
+                    || baseItem.getType() == BaseItemKind.AUDIO_BOOK;
 
-            if (isMusic) {
+            if (isAudio) {
                 queueButton = TextUnderButton.create(requireContext(), R.drawable.ic_add, buttonSize, 2, getString(R.string.lbl_add_to_queue), new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -956,7 +970,11 @@ public class FullDetailsFragment extends Fragment implements RecordingIndicatorV
         org.jellyfin.sdk.model.api.UserItemDataDto userData = mBaseItem.getUserData();
         if (userData != null && mProgramInfo == null) {
             if (mBaseItem.getType() != BaseItemKind.MUSIC_ARTIST && mBaseItem.getType() != BaseItemKind.PERSON) {
-                mWatchedToggleButton = TextUnderButton.create(requireContext(), R.drawable.ic_watch, buttonSize, 0, getString(R.string.lbl_watched), markWatchedListener);
+                if (mBaseItem.getType() == BaseItemKind.AUDIO_BOOK){
+                    mWatchedToggleButton = TextUnderButton.create(requireContext(), R.drawable.ic_watch, buttonSize, 0, getString(R.string.lbl_listened), markWatchedListener);
+                } else {
+                    mWatchedToggleButton = TextUnderButton.create(requireContext(), R.drawable.ic_watch, buttonSize, 0, getString(R.string.lbl_watched), markWatchedListener);
+                }
                 mWatchedToggleButton.setActivated(userData.getPlayed());
                 mDetailsOverviewRow.addAction(mWatchedToggleButton);
             }
