@@ -23,13 +23,13 @@ import org.jellyfin.sdk.api.client.extensions.liveTvApi
 import org.jellyfin.sdk.api.client.extensions.tvShowsApi
 import org.jellyfin.sdk.api.client.extensions.userLibraryApi
 import org.jellyfin.sdk.api.client.extensions.videosApi
+import org.jellyfin.sdk.model.UUID
 import org.jellyfin.sdk.model.api.BaseItemDto
 import org.jellyfin.sdk.model.api.BaseItemKind
 import org.jellyfin.sdk.model.api.ItemSortBy
 import org.jellyfin.sdk.model.api.MediaType
 import org.jellyfin.sdk.model.extensions.inWholeTicks
 import org.jellyfin.sdk.model.extensions.ticks
-import java.util.UUID
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -208,6 +208,10 @@ class SdkPlaybackHelper(
 			val response by api.videosApi.getAdditionalPart(item.id)
 			addAll(response.items)
 		}
+	}
+
+	override suspend fun retrieveItems(ids: List<UUID>): List<BaseItemDto> {
+			return(api.itemsApi.getItems(ids = ids).content.items)
 	}
 
 	override fun retrieveAndPlay(id: UUID, shuffle: Boolean, position: Long?, context: Context) {

@@ -25,11 +25,13 @@ import org.jellyfin.sdk.api.client.extensions.userLibraryApi
 import org.jellyfin.sdk.api.sockets.subscribe
 import org.jellyfin.sdk.api.sockets.subscribeGeneralCommand
 import org.jellyfin.sdk.api.sockets.subscribeGeneralCommands
+import org.jellyfin.sdk.model.api.BaseItemDto
 import org.jellyfin.sdk.model.api.BaseItemKind
 import org.jellyfin.sdk.model.api.GeneralCommandType
 import org.jellyfin.sdk.model.api.LibraryChangedMessage
 import org.jellyfin.sdk.model.api.LibraryUpdateInfo
 import org.jellyfin.sdk.model.api.MediaType
+import org.jellyfin.sdk.model.api.PlayCommand
 import org.jellyfin.sdk.model.api.PlayMessage
 import org.jellyfin.sdk.model.api.PlaystateCommand
 import org.jellyfin.sdk.model.api.PlaystateMessage
@@ -161,17 +163,36 @@ class SocketHandler(
 			dataRefreshService.lastLibraryChange = Instant.now()
 	}
 
-	private fun onPlayMessage(message: PlayMessage) {
+	private suspend fun onPlayMessage(message: PlayMessage) {
+		val playMessageType = message.data
+		Timber.i("NielsTaughtMeThisToFilterTheLogs: (Message) $playMessageType")
+		val playCommand = message.data?.playCommand
 		val itemId = message.data?.itemIds?.firstOrNull() ?: return
 
-		runCatching {
-			playbackHelper.retrieveAndPlay(
-				itemId,
-				false,
-				message.data?.startPositionTicks,
-				context
-			)
-		}.onFailure { Timber.w(it, "Failed to start playback") }
+		val items = message.data?.itemIds?.takeIf { it.isNotEmpty() }?.let { ids -> playbackHelper.retrieveItems(ids) } ?: emptyList()
+
+
+		for(item in items) {
+			Timber.i("NielsTaughtMeThisToFilterTheLogs: (Item) ${item.name}")
+		}
+		when (playCommand) {
+			PlayCommand.PLAY_NOW -> {
+				runCatching {
+					playbackHelper.retrieveAndPlay(
+						itemId,
+						false,
+						message.data?.startPositionTicks,
+						context
+					)
+				}.onFailure { Timber.w(it, "Failed to start playback") }
+			}
+
+			PlayCommand.PLAY_NEXT -> TODO()
+			PlayCommand.PLAY_LAST -> TODO()
+			PlayCommand.PLAY_INSTANT_MIX -> TODO()
+			PlayCommand.PLAY_SHUFFLE -> TODO()
+			null -> TODO()
+		}
 	}
 
 	@Suppress("ComplexMethod")

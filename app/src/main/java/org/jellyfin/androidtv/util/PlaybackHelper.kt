@@ -14,6 +14,8 @@ interface PlaybackHelper {
 		outerResponse: Response<List<BaseItemDto>>,
 	)
 
+	suspend fun retrieveItems(ids: List<UUID>): List<BaseItemDto>
+
 	fun retrieveAndPlay(id: UUID, shuffle: Boolean, position: Long?, context: Context)
 
 	fun retrieveAndPlay(id: UUID, shuffle: Boolean, context: Context) =
