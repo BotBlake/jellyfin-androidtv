@@ -170,7 +170,7 @@ class SocketHandler(
 		val itemId = message.data?.itemIds?.firstOrNull() ?: return
 
 		val items = message.data?.itemIds?.takeIf { it.isNotEmpty() }?.let { ids -> playbackHelper.retrieveItems(ids) } ?: emptyList()
-
+		val itemCount = items.size
 
 		for(item in items) {
 			Timber.i("NielsTaughtMeThisToFilterTheLogs: (Item) ${item.name}")
@@ -178,6 +178,7 @@ class SocketHandler(
 		when (playCommand) {
 			PlayCommand.PLAY_NOW -> {
 				runCatching {
+					mediaManager.addToAudioQueue(items)
 					playbackHelper.retrieveAndPlay(
 						itemId,
 						false,
