@@ -26,6 +26,7 @@ interface MediaManager {
 	fun removeFromAudioQueue(item: BaseItemDto)
 	val isPlayingAudio: Boolean
 	fun playNow(context: Context, items: List<BaseItemDto>, position: Int, shuffle: Boolean)
+	fun playNowFrom(items: List<BaseItemDto>, startfrom: Int, position: Int, shuffle: Boolean)
 	fun playFrom(item: BaseItemDto): Boolean
 	fun shuffleAudioQueue()
 	fun hasNextAudioItem(): Boolean

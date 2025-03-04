@@ -23,13 +23,14 @@ import org.jellyfin.sdk.api.client.extensions.liveTvApi
 import org.jellyfin.sdk.api.client.extensions.tvShowsApi
 import org.jellyfin.sdk.api.client.extensions.userLibraryApi
 import org.jellyfin.sdk.api.client.extensions.videosApi
-import org.jellyfin.sdk.model.UUID
+
 import org.jellyfin.sdk.model.api.BaseItemDto
 import org.jellyfin.sdk.model.api.BaseItemKind
 import org.jellyfin.sdk.model.api.ItemSortBy
 import org.jellyfin.sdk.model.api.MediaType
 import org.jellyfin.sdk.model.extensions.inWholeTicks
 import org.jellyfin.sdk.model.extensions.ticks
+import java.util.UUID
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -220,7 +221,8 @@ class SdkPlaybackHelper(
 				userPreferences[UserPreferences.resumeSubtractDuration].toIntOrNull()?.seconds
 					?: Duration.ZERO
 
-			val item by api.userLibraryApi.getItem(id)
+			val item = api.userLibraryApi.getItem(id).content
+
 			val pos = position?.ticks ?: item.userData?.playbackPositionTicks?.ticks?.minus(
 				resumeSubtractDuration
 			) ?: Duration.ZERO

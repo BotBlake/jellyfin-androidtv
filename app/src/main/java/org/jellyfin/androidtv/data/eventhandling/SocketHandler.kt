@@ -25,7 +25,6 @@ import org.jellyfin.sdk.api.client.extensions.userLibraryApi
 import org.jellyfin.sdk.api.sockets.subscribe
 import org.jellyfin.sdk.api.sockets.subscribeGeneralCommand
 import org.jellyfin.sdk.api.sockets.subscribeGeneralCommands
-import org.jellyfin.sdk.model.api.BaseItemDto
 import org.jellyfin.sdk.model.api.BaseItemKind
 import org.jellyfin.sdk.model.api.GeneralCommandType
 import org.jellyfin.sdk.model.api.LibraryChangedMessage
@@ -41,6 +40,7 @@ import org.jellyfin.sdk.model.serializer.toUUIDOrNull
 import timber.log.Timber
 import java.time.Instant
 import java.util.UUID
+
 
 class SocketHandler(
 	private val context: Context,
@@ -166,26 +166,35 @@ class SocketHandler(
 	private suspend fun onPlayMessage(message: PlayMessage) {
 		val playMessageType = message.data
 		Timber.i("NielsTaughtMeThisToFilterTheLogs: (Message) $playMessageType")
+
 		val playCommand = message.data?.playCommand
-		val itemId = message.data?.itemIds?.firstOrNull() ?: return
+		val items = message.data?.itemIds?.takeIf { it.isNotEmpty() }?.let { ids -> playbackHelper.retrieveItems(ids) } ?: return
+		val firstItem = items.first()
 
-		val items = message.data?.itemIds?.takeIf { it.isNotEmpty() }?.let { ids -> playbackHelper.retrieveItems(ids) } ?: emptyList()
-		val itemCount = items.size
+		val isAudio =
+			firstItem.type === BaseItemKind.MUSIC_ALBUM
+				|| firstItem.type === BaseItemKind.MUSIC_ARTIST
+				|| firstItem.type === BaseItemKind.AUDIO
+				|| firstItem.type === BaseItemKind.AUDIO_BOOK
 
-		for(item in items) {
-			Timber.i("NielsTaughtMeThisToFilterTheLogs: (Item) ${item.name}")
-		}
 		when (playCommand) {
 			PlayCommand.PLAY_NOW -> {
-				runCatching {
-					mediaManager.addToAudioQueue(items)
-					playbackHelper.retrieveAndPlay(
-						itemId,
-						false,
-						message.data?.startPositionTicks,
-						context
-					)
-				}.onFailure { Timber.w(it, "Failed to start playback") }
+				val startPosition = message.data?.startPositionTicks?: 0
+				if (isAudio) {
+					Timber.i("NielsTaughtMeThisToFilterTheLogs: BaseItemAudio, $startPosition")
+					runCatching {
+						mediaManager.playNowFrom(items, 0, startPosition.toInt()/10000, false)
+					}.onFailure { Timber.w(it, "Failed to start playback (NielsTaughtMeThisToFilterTheLogs:)") }
+				} else {
+					runCatching {
+						playbackHelper.retrieveAndPlay(
+							firstItem.id,
+							false,
+							startPosition,
+							context
+						)
+					}.onFailure { Timber.w(it, "Failed to start playback") }
+				}
 			}
 
 			PlayCommand.PLAY_NEXT -> TODO()
