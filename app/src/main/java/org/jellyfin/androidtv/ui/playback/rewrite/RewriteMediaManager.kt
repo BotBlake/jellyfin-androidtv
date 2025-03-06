@@ -221,19 +221,6 @@ class RewriteMediaManager(
 		playbackManager.queue.clear()
 		playbackManager.queue.addSupplier(queueSupplier)
 		playbackManager.state.play()
-
-		navigationRepository.navigate(Destinations.nowPlaying)
-	}
-
-	override fun playNowFrom(items: List<BaseItemDto>, startfrom: Int, position: Int, shuffle: Boolean) {
-		val filteredItems = items.drop(position)
-		queueSupplier.items.clear()
-		queueSupplier.items.addAll(filteredItems)
-		playbackManager.state.setPlaybackOrder(if (shuffle) PlaybackOrder.SHUFFLE else PlaybackOrder.DEFAULT)
-		playbackManager.queue.clear()
-		playbackManager.queue.addSupplier(queueSupplier)
-		playbackManager.state.play()
-		playbackManager.state.seek(startfrom.toDuration(DurationUnit.MILLISECONDS) )
 		navigationRepository.navigate(Destinations.nowPlaying)
 	}
 
