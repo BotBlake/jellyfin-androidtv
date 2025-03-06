@@ -21,5 +21,9 @@ interface PlaybackHelper {
 	fun retrieveAndPlay(id: UUID, shuffle: Boolean, context: Context) =
 		retrieveAndPlay(id, shuffle, null, context)
 
+	fun startNewVideoQueue(context: Context, mainItem: BaseItemDto, items: List<BaseItemDto>, startposition: Int)
+
+	fun addToVideoQueue(context: Context, items: List<BaseItemDto>, next: Boolean)
+
 	fun playInstantMix(context: Context, item: BaseItemDto)
 }

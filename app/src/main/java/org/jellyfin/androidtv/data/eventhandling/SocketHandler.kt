@@ -36,10 +36,13 @@ import org.jellyfin.sdk.model.api.PlaystateCommand
 import org.jellyfin.sdk.model.api.PlaystateMessage
 import org.jellyfin.sdk.model.extensions.get
 import org.jellyfin.sdk.model.extensions.getValue
+import org.jellyfin.sdk.model.extensions.inWholeTicks
+import org.jellyfin.sdk.model.extensions.ticks
 import org.jellyfin.sdk.model.serializer.toUUIDOrNull
 import timber.log.Timber
 import java.time.Instant
 import java.util.UUID
+import kotlin.time.Duration
 
 
 class SocketHandler(
@@ -179,26 +182,39 @@ class SocketHandler(
 
 		when (playCommand) {
 			PlayCommand.PLAY_NOW -> {
-				val startPosition = message.data?.startPositionTicks?: 0
+				val startPosition = message.data?.startPositionTicks?.ticks ?: Duration.ZERO
 				if (isAudio) {
-					Timber.i("NielsTaughtMeThisToFilterTheLogs: BaseItemAudio, $startPosition")
-					runCatching {
-						mediaManager.playNowFrom(items, 0, startPosition.toInt()/10000, false)
-					}.onFailure { Timber.w(it, "Failed to start playback (NielsTaughtMeThisToFilterTheLogs:)") }
+					runCatching{
+						withContext(Dispatchers.Main) {
+							mediaManager.playNow(context, items, 0, false)
+						}
+					}.onFailure { Timber.w(it, "Failed to start audio playback") }
 				} else {
 					runCatching {
-						playbackHelper.retrieveAndPlay(
-							firstItem.id,
-							false,
-							startPosition,
-							context
+						playbackHelper.startNewVideoQueue(
+							context,
+							firstItem,
+							items,
+							startPosition.inWholeTicks.toInt(),
 						)
-					}.onFailure { Timber.w(it, "Failed to start playback") }
+					}.onFailure { Timber.w(it, "Failed to start non-audio playback") }
 				}
 			}
 
 			PlayCommand.PLAY_NEXT -> TODO()
-			PlayCommand.PLAY_LAST -> TODO()
+			PlayCommand.PLAY_LAST -> {
+				if (isAudio) {
+					runCatching{
+						withContext(Dispatchers.Main) {
+							mediaManager.addToAudioQueue(items)
+						}
+					}.onFailure { Timber.w(it, "Failed to start audio playback") }
+				} else {
+					runCatching {
+						playbackHelper.addToVideoQueue(context, items, false)
+					}.onFailure { Timber.w(it, "Failed to start non-audio playback") }
+				}
+			}
 			PlayCommand.PLAY_INSTANT_MIX -> TODO()
 			PlayCommand.PLAY_SHUFFLE -> TODO()
 			null -> TODO()

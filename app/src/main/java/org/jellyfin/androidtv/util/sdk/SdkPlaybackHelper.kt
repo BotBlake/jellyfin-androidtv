@@ -235,14 +235,31 @@ class SdkPlaybackHelper(
 			} else if (item.type == BaseItemKind.AUDIO && items.isNotEmpty()) {
 				mediaManager.playNow(context, listOf(items.first()), 0, false)
 			} else {
-				videoQueueManager.setCurrentVideoQueue(items)
-				navigationRepository.navigate(
-					playbackLauncher.getPlaybackDestination(
-						item.type,
-						pos.inWholeTicks.toInt()
-					),
-					playbackControllerContainer.playbackController?.hasFragment() == true
-				)
+				startNewVideoQueue(context, item, items, pos.inWholeTicks.toInt())
+			}
+		}
+	}
+
+	override fun startNewVideoQueue(context: Context, mainItem: BaseItemDto, items: List<BaseItemDto>, startposition: Int){
+		getScope(context).launch {
+			videoQueueManager.clearVideoQueue()
+			videoQueueManager.setCurrentVideoQueue(items)
+			navigationRepository.navigate(
+				playbackLauncher.getPlaybackDestination(
+					mainItem.type,
+					startposition
+				),
+				playbackControllerContainer.playbackController?.hasFragment() == true
+			)
+		}
+	}
+
+	override fun addToVideoQueue(context: Context, items: List<BaseItemDto>, next: Boolean) {
+		getScope(context).launch {
+			if (next) {
+				videoQueueManager.playNext(items)
+			} else {
+				videoQueueManager.addToQueue(items)
 			}
 		}
 	}
