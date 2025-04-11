@@ -74,11 +74,6 @@ android {
 	}
 }
 
-aboutLibraries {
-	// Remove the "generated" timestamp to allow for reproducible builds
-	excludeFields = arrayOf("generated")
-}
-
 val versionTxt by tasks.registering {
 	val path = layout.buildDirectory.asFile.get().resolve("version.txt")
 
@@ -96,7 +91,6 @@ dependencies {
 	implementation(projects.playback.media3.exoplayer)
 	implementation(projects.playback.media3.session)
 	implementation(projects.preference)
-	implementation(libs.jellyfin.apiclient)
 	implementation(libs.jellyfin.sdk) {
 		// Change version if desired
 		val sdkVersion = findProperty("sdk.version")?.toString()
@@ -129,13 +123,13 @@ dependencies {
 	implementation(libs.androidx.cardview)
 	implementation(libs.androidx.startup)
 	implementation(libs.bundles.androidx.compose)
-	implementation(libs.androidx.tv.material)
 
 	// Dependency Injection
 	implementation(libs.bundles.koin)
 
 	// Media players
 	implementation(libs.androidx.media3.exoplayer)
+	implementation(libs.androidx.media3.datasource.okhttp)
 	implementation(libs.androidx.media3.exoplayer.hls)
 	implementation(libs.androidx.media3.ui)
 	implementation(libs.jellyfin.androidx.media3.ffmpeg.decoder)
